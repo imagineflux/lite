@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX LITE</title>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <style>
+        /* --- Root Variables for Theming --- */
+        :root {
+            --bg-color-light: #f0f6ff;
+            --text-color-light: #1c1e21;
+            --card-bg-light: rgba(255, 255, 255, 0.92);
+            --border-color-light: rgba(220, 223, 230, 0.3);
+            --primary-color: #6c63ff;
+            --primary-hover: #564fd8;
+            --danger-color: #ff6b6b;
+            --danger-hover: #ff5252;
+            --accent-color: #9d7bff;
+            --success-color: #4CAF50;
+            
+            --bg-color-dark: #0a0a1a;
+            --text-color-dark: #e4e6eb;
+            --card-bg-dark: rgba(30, 30, 46, 0.85);
+            --border-color-dark: rgba(58, 59, 92, 0.3);
+            
+            --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Particle Background --- */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        /* --- Fun Background Animation --- */
+        @keyframes fun-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- General Body Styling --- */
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color-light);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc, #ffd1ff);
+            background-size: 400% 400%;
+            animation: fun-animation 18s ease infinite;
+        }
+        
+        /* --- Night Mode Styling --- */
+        body.night-mode {
+            color: var(--text-color-dark);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #536976, #292e49);
+            background-size: 400% 400%;
+            animation: fun-animation 22s ease infinite;
+        }
+
+        /* --- Main Container & Layout --- */
+        .page-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color-light);
+        }
+        
+        body.night-mode .header {
+            background: rgba(30, 30, 46, 0.25);
+            border: 1px solid var(--border-color-dark);
+        }
+
+        .header img {
+            max-width: 320px;
+            filter: drop-shadow(0 6px 15px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .header img:hover {
+            transform: scale(1.03);
+        }
+
+        /* --- Welcome Text Styling --- */
+        .welcome-text {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 18px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color-light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-text::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 0 0 3px 3px;
+        }
+        
+        body.night-mode .welcome-text {
+            color: #fff;
+            background: rgba(30, 30, 46, 0.6);
+            border: 1px solid var(--border-color-dark);
+        }
+        
+        body.night-mode .welcome-text::before {
+            background: linear-gradient(90deg, var(--accent-color), #6f42c1);
+        }
+
+        /* --- Generic Component Styles --- */
+        .card {
+            background-color: var(--card-bg-light);
+            border-radius: 24px;
+            padding: 35px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color-light);
+            box-shadow: var(--box-shadow);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+        }
+        
+        body.night-mode .card {
+            background-color: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        
+        body.night-mode .card::after {
+            background: radial-gradient(circle, rgba(111,66,193,0.1) 0%, rgba(111,66,193,0) 70%);
+        }
+
+        /* --- Form Elements Styling --- */
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-color-light);
+            border-radius: 14px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-color-light);
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+        }
+        
+        body.night-mode input, body.night-mode select, body.night-mode textarea {
+            background-color: rgba(40, 40, 60, 0.75);
+            color: var(--text-color-dark);
+            border-color: rgba(68, 68, 102, 0.4);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2), inset 0 2px 4px rgba(0,0,0,0.03);
+        }
+        
+        body.night-mode input:focus, body.night-mode select:focus, body.night-mode textarea:focus {
+            box-shadow: 0 0 0 3px rgba(157, 123, 255, 0.3), inset 0 2px 4px rgba(0,0,0,0.08);
+            border-color: var(--accent-color);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            font-size: 1.05rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-color-light);
+            font-size: 1.05rem;
+        }
+        
+        body.night-mode label {
+            color: var(--text-color-dark);
+        }
+        
+        /* --- Button Styling --- */
+        button {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            box-shadow: 0 6px 18px rgba(108, 99, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(0, 0);
+            transition: transform 0.6s ease;
+            pointer-events: none;
+        }
+        
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.35);
+        }
+        
+        button:hover::after {
+            transform: translate(50%, 50%);
+        }
+        
+        button:disabled {
+            background: #a0a0a0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            box-shadow: 0 6px 18px rgba(108, 117, 125, 0.25);
+        }
+        
+        button.secondary:hover {
+            box-shadow: 0 10px 30px rgba(108, 117, 125, 0.35);
+            transform: translateY(-4px);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 18px;
+        }
+        
+        .button-group button {
+            flex-grow: 1;
+        }
+
+        /* --- Layout Grids --- */
+        .generator-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 992px) {
+            .generator-layout {
+                grid-template-columns: 1fr 400px;
+            }
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        /* --- Checkbox & Toggles --- */
+        .checkbox-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .checkbox-bar label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.35);
+            transition: background 0.3s ease;
+        }
+        
+        body.night-mode .checkbox-bar label {
+            background: rgba(40,40,60,0.35);
+        }
+        
+        .checkbox-bar label:hover {
+            background: rgba(108, 99, 255, 0.15);
+        }
+        
+        .checkbox-bar input[type="checkbox"] {
+            width: 1.4em;
+            height: 1.4em;
+            margin-right: 14px;
+            accent-color: var(--primary-color);
+        }
+
+        /* Night mode switch */
+        .switch { 
+            position: fixed; 
+            top: 30px; 
+            right: 120px; 
+            display: inline-block; 
+            width: 65px; 
+            height: 38px; 
+            z-index: 1001;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-radius: 34px;
+        }
+        
+        .switch input { opacity: 0; width: 0; height: 0; }
+        
+        .slider { 
+            position: absolute; 
+            cursor: pointer; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: #ccc; 
+            transition: .4s; 
+            border-radius: 34px; 
+        }
+        
+        .slider:before { 
+            position: absolute; 
+            content: ""; 
+            height: 30px; 
+            width: 30px; 
+            left: 4px; 
+            bottom: 4px; 
+            background-color: white; 
+            transition: .4s; 
+            border-radius: 50%; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        
+        input:checked + .slider { 
+            background-color: var(--accent-color); 
+        }
+        
+        input:checked + .slider:before { 
+            transform: translateX(27px); 
+        }
+
+        /* --- Specific Section Styling --- */
+        #outputImagesContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            min-height: 350px;
+            background: rgba(255,255,255,0.35);
+            padding: 25px;
+            border-radius: 20px;
+            position: relative;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color-light);
+        }
+        
+        body.night-mode #outputImagesContainer {
+            background: rgba(30,30,46,0.35);
+            border: 1px solid var(--border-color-dark);
+        }
+
+        .image-result-card {
+            background: var(--card-bg-light);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border-color-light);
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+        
+        .image-result-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        
+        body.night-mode .image-result-card {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .image-result-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+        
+        #historyCtn .grid-container, 
+        #seedPromptList .grid-container, 
+        #favoritesCtn .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .preview-item, .seed-prompt-item, .image-card {
+            background-color: var(--card-bg-light);
+            border: 1px solid var(--border-color-light);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(12px);
+        }
+        
+        .preview-item:hover, .seed-prompt-item:hover, .image-card:hover {
+            transform: translateY(-7px);
+            box-shadow: var(--box-shadow-hover);
+        }
+        
+        body.night-mode .preview-item, body.night-mode .seed-prompt-item, body.night-mode .image-card {
+            background-color: var(--card-bg-dark);
+            border-color: var(--border-color-dark);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+        
+        .preview-item img, .image-card img {
+            max-width: 100%;
+            border-radius: 14px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+        
+        /* --- Popups & Modals --- */
+        #overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); 
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        
+        #popup {
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 650px;
+        }
+        
+        .popup-content {
+            background-color: var(--card-bg-light); 
+            padding: 45px; 
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); 
+            text-align: center; 
+            max-width: 100%;
+            border: 1px solid var(--border-color-light);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+        
+        body.night-mode .popup-content {
+            background-color: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+        }
+
+        /* --- Settings Modal --- */
+        #settingsBtn {
+            position: fixed; 
+            top: 25px; 
+            left: 25px; 
+            z-index: 1001; 
+            height: 55px; 
+            width: 55px;
+            font-size: 26px; 
+            background-color: var(--card-bg-light); 
+            border: 1px solid var(--border-color-light);
+            border-radius: 50%; 
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        #settingsBtn:hover {
+            transform: rotate(30deg) scale(1.12);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        body.night-mode #settingsBtn {
+             background-color: var(--card-bg-dark);
+             border: 1px solid var(--border-color-dark);
+             color: var(--text-color-dark);
+        }
+        
+        #settingsModalEl {
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 90%; 
+            max-width: 950px; 
+            height: 85vh; 
+            background-color: var(--card-bg-light);
+            border-radius: 30px; 
+            box-shadow: 0 30px 70px rgba(0,0,0,0.35); 
+            z-index: 2000;
+            overflow: hidden;
+            border: 1px solid var(--border-color-light);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+        
+        body.night-mode #settingsModalEl {
+            background-color: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+        }
+
+        .settings-container { 
+            display: grid; 
+            grid-template-columns: 220px 1fr; 
+            height: 100%; 
+        }
+        
+        .settings-categories { 
+            padding: 25px; 
+            border-right: 1px solid var(--border-color-light); 
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .settings-categories button {
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: left;
+            padding: 14px 22px;
+            border-radius: 12px;
+            background: rgba(108, 99, 255, 0.12);
+            color: var(--primary-color);
+            border: none;
+            box-shadow: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        body.night-mode .settings-categories button {
+            background: rgba(157, 123, 255, 0.12);
+            color: var(--accent-color);
+        }
+        
+        .settings-categories button:hover {
+            background: rgba(108, 99, 255, 0.25);
+        }
+        
+        body.night-mode .settings-categories { 
+            border-right: 1px solid var(--border-color-dark);
+            background: rgba(30,30,46,0.25);
+        }
+        
+        .settings-options { 
+            padding: 35px; 
+            overflow-y: auto; 
+            position: relative;
+        }
+        
+        /* --- Helper Classes --- */
+        h3 {
+            border-bottom: none;
+            padding-bottom: 18px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.9rem;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 15px;
+            height: 5px;
+            width: 70px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+        }
+        
+        body.night-mode h3::before {
+            background: linear-gradient(90deg, var(--accent-color), #6f42c1);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 2rem;
+            color: var(--danger-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 107, 107, 0.12);
+            transform: rotate(90deg);
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Word count styling */
+        #wordCountEl {
+            text-align: right;
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: -12px;
+            margin-bottom: 18px;
+        }
+        
+        body.night-mode #wordCountEl {
+            color: #aaa;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.06);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        
+        body.night-mode ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .generator-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .switch {
+                right: 25px;
+                top: 25px;
+            }
+            
+            .welcome-text {
+                font-size: 1.5rem;
+                padding: 18px;
+            }
+            
+            h3 {
+                font-size: 1.6rem;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+        }
+        
+        /* New badge style */
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 12px;
+            vertical-align: middle;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+        
+        /* Tab navigation */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 14px 25px;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--primary-color);
+            border: none;
+            font-size: 1.05rem;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+        
+        body.night-mode .tab-btn {
+            background: rgba(157, 123, 255, 0.1);
+            color: var(--accent-color);
+        }
+        
+        /* Prompt tools */
+        .prompt-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .tool-container {
+            background: rgba(255,255,255,0.4);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border-color-light);
+            backdrop-filter: blur(8px);
+        }
+        
+        body.night-mode .tool-container {
+            background: rgba(30,30,46,0.4);
+            border: 1px solid var(--border-color-dark);
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .tool-content {
+            display: none;
+        }
+        
+        .tool-content.active {
+            display: block;
+        }
+
+        /* --- STYLES FOR PROMPT OUTPUT BOX --- */
+        #responseContainer, #apiResponseContainer {
+            max-height: 200px;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+
+        /* --- STYLES FOR IMAGE MODAL --- */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .image-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .modal-close-btn:hover,
+        .modal-close-btn:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+
+<div id="overlay"></div>
+<div id="popup">
+    <div class="popup-content">
+        <p style="font-size: 1.25rem; margin-bottom: 30px; line-height: 1.6;">NÃO GERE QUANTIDADES ABSURDAS DE IMAGENS DE UMA VEZ POIS O SISTEMA PODE TRAVAR. CASO OCORRA ALGUM ERRO, RECARREGUE A PÁGINA E TENTE NOVAMENTE.</p>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <button onclick="fecharPopup()">OK</button>
+            <a href="http://t.me/rafaelodessa" target="_blank" style="text-decoration: none;"><button class="secondary">SUGESTÕES</button></a>
+        </div>
+    </div>
+</div>
+
+<div id="loadingPopup" hidden>
+  <div id="loadingMessage" class="popup-content">
+    <b style="font-size: 1.4rem;">Buscando Recursos</b>
+    <div id="loadingSpinner" style="margin: 30px auto; width: 60px; height: 60px; border: 6px solid rgba(108, 99, 255, 0.2); border-top: 6px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <span id="countdownTimer">Estimando...</span>
+  </div>
+</div>
+
+<div id="imageModal" class="image-modal">
+    <span class="modal-close-btn" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" class="image-modal-content">
+</div>
+
+<div class="page-wrapper">
+    <div class="header floating">
+      <img src="https://user-uploads.perchance.org/file/3c394bbdbd521b9afab8ff074b7cbc94.png" alt="FLUX LITE" />
+    </div>
+
+    <p class="welcome-text">"BEM-VINDO À NOSSA PÁGINA, DEIXE SUA IMAGINAÇÃO FLUIR."</p>
+    
+    <div class="prompt-tools">
+        <div class="tool-container">
+            <div class="tool-header" onclick="toggleTool('textToPrompt')">
+                <h3>📝 Ferramentas para Prompt</h3>
+                <span id="textToPromptToggle">▼</span>
+            </div>
+            <div id="textToPromptContent" class="tool-content">
+                <div class="tool-container">
+                    <div class="tool-header" onclick="toggleTool('promptGenerator')">
+                        <h4>TEXTO PARA PROMPT</h4>
+                        <span id="promptGeneratorToggle">▼</span>
+                    </div>
+                    <div id="promptGeneratorContent" class="tool-content">
+                        <textarea id="userInput" placeholder="Descreva a imagem que deseja criar..."></textarea>
+                        <button id="generatePromptButton">Gerar Prompt</button>
+                        <div id="responseContainer" style="display: none; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.6); border-radius: 16px;"><p id="promptOutput"></p></div>
+                        <button id="copyButton" style="display: none; margin-top: 20px;">Copiar Prompt</button>
+                    </div>
+                </div>
+                
+                <div class="tool-container">
+                    <div class="tool-header" onclick="toggleTool('imageToPrompt')">
+                        <h4>📸 IMG PARA PROMPT</h4>
+                        <span id="imageToPromptToggle">▼</span>
+                    </div>
+                    <div id="imageToPromptContent" class="tool-content">
+                        <img id="imagePreviewEl" src="" alt="Pré-visualização da imagem" style="max-width: 100%; border-radius: 16px; margin-bottom: 20px; aspect-ratio: 16/9; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                        <input type="file" id="imageUploadEl" accept="image/*">
+                        <textarea id="userContentEl" placeholder="Descreva a imagem (opcional)..." style="margin-top: 20px;"></textarea>
+                        <button id="urImageUrlsendButtonEl" style="margin-top: 20px;">▶️ Enviar</button>
+                        <div id="apiResponseContainer" style="display: none; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.6); border-radius: 16px;"><p id="apiResponseEl"></p></div>
+                        <button id="urImageUrlcopyButtonEl" style="display: none; margin-top: 20px;">📝 Copiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="imagesTab">
+        <div class="generator-layout">
+            <div class="left-panel">
+                <div class="card">
+                    <label for="promptInput">Descreva sua imagem:</label>
+                    <textarea id="promptInput" placeholder="Ex: um astronauta surfando em um anel de Saturno, arte digital, épico, detalhado"></textarea>
+                    <div id="wordCountEl">Número de palavras: 0</div>
+                </div>
+                <div class="card">
+                    <h3>Imagens Geradas</h3>
+                    <div id="outputImagesContainer"></div>
+                </div>
+            </div>
+            <div class="right-panel">
+                 <div class="card controls-container controls">
+                    <h3>Configurações</h3>
+                    <div class="controls-grid">
+                        <div>
+                            <label for="resolutionSelect">Resolução:</label>
+                            <select id="resolutionSelect" onchange="updateResolutionInputs()"></select>
+                        </div>
+                        <div>
+                            <label for="modelSelect">Modelo de IA:</label>
+                            <select id="modelSelect"></select>
+                        </div>
+                    </div>
+                    <div id="customSizeInputs" style="display: none;">
+                        <label for="widthInput">Largura:</label>
+                        <input id="widthInput" type="number" min="128" max="3840" value="768" />
+                        <label for="heightInput">Altura:</label>
+                        <input id="heightInput" type="number" min="128" max="2160" value="768" />
+                    </div>
+                    <label for="seedInput">Semente (Seed):</label>
+                    <div class="seed-input-container" style="display: flex; gap: 10px;">
+                        <input id="seedInput" type="number" placeholder="Seed" value="1" />
+                        <button id="lockToggleBtn" onclick="toggleLock()" style="padding: 0 18px;">🔐</button>
+                    </div>
+                    <label for="imageCountInput">Número de Imagens:</label>
+                    <input type="number" id="imageCountInput" min="1" max="100" value="1">
+
+                    <div class="checkbox-bar">
+                        <label><input id="enhanceInput" type="checkbox" /> Melhorar Prompt</label>
+                        <label><input id="nologoInput" type="checkbox" checked /> Sem Logo</label>
+                        <label><input id="privateInput" type="checkbox" checked /> Privado</label>
+                    </div>
+                    <button id="newPromptBtn" onclick="sendNewPrompt()" style="width: 100%; padding: 18px; font-size: 1.15rem;">Gerar Imagens</button>
+                 </div>
+            </div>
+        </div>
+
+        <div class="tab-nav">
+            <div class="tab-btn active" onclick="showTab('history')">Histórico</div>
+            <div class="tab-btn" onclick="showTab('prompts')">Prompts Salvos</div>
+            <div class="tab-btn" onclick="showTab('favorites')">Favoritos</div>
+        </div>
+        
+        <div id="historyCtn" class="card">
+            <h3>Gerações Anteriores</h3>
+            <div id="previewList" class="grid-container"></div>
+        </div>
+        
+        <div id="seedPromptList" class="card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h3>Prompts Salvos</h3>
+                <button id="deleteAllBtn" onclick="deleteAllSavedPrompts()" style="background: linear-gradient(135deg, var(--danger-color), var(--danger-hover));">Limpar Tudo</button>
+            </div>
+            <div class="grid-container"></div>
+        </div>
+        
+        <div id="favoritesCtn" class="card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h3>Imagens Favoritas</h3>
+                <span id="favoritesDropdown" style="transition: transform 0.3s;">▼</span>
+            </div>
+            <div id="favoritesList" class="grid-container"></div>
+        </div>
+    </div>
+    
+    <div id="settingsModalEl">
+        <div class="settings-container">
+            <div class="settings-categories">
+                <h3>Categorias</h3>
+                <button onclick="showSettingsCategory('general')">Geral</button>
+                <button onclick="showSettingsCategory('storage')">Armazenamento</button>
+                <button onclick="showSettingsCategory('patchNotes')">Notas de Atualização</button>
+            </div>
+            <div class="settings-options">
+                <button class="close-btn" onclick="closeSettings()">✖</button>
+                <h3 id="settingsHeaderEl">Configurações Gerais</h3>
+                <div id="generalSettingsContent">
+                    <button id="wipeDataBtn" style="background: linear-gradient(135deg, var(--danger-color), var(--danger-hover)); padding: 16px; margin-top: 25px; width: 100%;">Limpar Todos os Dados</button>
+                </div>
+                <div id="storageSettingsContent" style="display: none;">
+                    <label for="maxStoredPromptsInput">Máximo de Prompts Salvos:</label>
+                    <input id="maxStoredPromptsInput" type="number" min="1" value="20" style="margin-bottom: 30px;" />
+                    <button onclick="saveSettings()" style="background: linear-gradient(135deg, var(--success-color), #43a047); width: 100%; padding: 16px;">Salvar Configurações</button>
+                </div>
+                <div id="patchNotesSettingsContent" style="display: none;"><iframe id="patchNotesIframeEl" src="https://null.perchance.org/sqnbunrr25" style="width: 100%; height: 80%; border: none; border-radius: 16px;"></iframe></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    // --- FUNÇÕES DO MODAL DE IMAGEM ---
+    function openImageModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const overlay = document.getElementById('overlay');
+        
+        modalImg.src = src;
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        const overlay = document.getElementById('overlay');
+        modal.style.display = 'none';
+        if (document.getElementById('popup').style.display !== 'block') {
+             overlay.style.display = 'none';
+        }
+    }
+
+    // Particles.js configuration
+    particlesJS("particles-js", {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 900
+                }
+            },
+            "color": {
+                "value": "#6c63ff"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.12,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.05,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 2,
+                    "size_min": 1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 160,
+                "color": "#6c63ff",
+                "opacity": 0.12,
+                "width": 1.2
+            },
+            "move": {
+                "enable": true,
+                "speed": 1.2,
+                "direction": "none",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 0.25
+                    }
+                },
+                "push": {
+                    "particles_nb": 6
+                }
+            }
+        },
+        "retina_detect": true
+    });
+
+    // Night mode particles update
+    function updateParticlesForNightMode() {
+        if (document.body.classList.contains("night-mode")) {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": {
+                        "value": 120,
+                        "density": {
+                            "enable": true,
+                            "value_area": 900
+                        }
+                    },
+                    "color": {
+                        "value": "#9d7bff"
+                    },
+                    "line_linked": {
+                        "color": "#9d7bff"
+                    }
+                }
+            });
+        } else {
+            particlesJS("particles-js", {
+                "particles": {
+                    "color": {
+                        "value": "#6c63ff"
+                    },
+                    "line_linked": {
+                        "color": "#6c63ff"
+                    }
+                }
+            });
+        }
+    }
+
+    // Initialize particles based on current mode
+    document.addEventListener('DOMContentLoaded', () => {
+        // Populate resolution dropdown
+        const resolutionSelect = document.getElementById('resolutionSelect');
+        const resolutions = [
+            { text: "128x128 - Miniatura", value: "128x128" },
+            { text: "256x256 - Pequena", value: "256x256" },
+            { text: "512x512 - Média", value: "512x512" },
+            { text: "768x768 - Padrão", value: "768x768", selected: true },
+            { text: "1024x1024 - Grande", value: "1024x1024" },
+            { text: "1920x1080 - Full HD", value: "1920x1080" },
+            { text: "2560x1440 - 2K", value: "2560x1440" },
+            { text: "3840x2160 - 4K", value: "3840x2160" },
+            { text: "Tamanho Personalizado", value: "custom" }
+        ];
+        resolutions.forEach(res => {
+            const option = document.createElement('option');
+            option.value = res.value;
+            option.textContent = res.text;
+            if (res.selected) option.selected = true;
+            resolutionSelect.appendChild(option);
+        });
+
+        // Populate model dropdown
+        const modelSelect = document.getElementById('modelSelect');
+        const models = [
+            { text: "Flux - Recomendado", value: "Flux" },
+            { text: "Flux-Pro - Avançado", value: "Flux-Pro" },
+            { text: "Flux-Realism - Fotorrealista", value: "Flux-Realism" },
+            { text: "Flux-Anime - Estilo Anime", value: "Flux-Anime" },
+            { text: "Flux-3D - Renderização 3D", value: "Flux-3D" },
+            { text: "Flux-CablyAI - Personalizado", value: "Flux-CablyAI" },
+            { text: "Turbo - Rápido (qualidade inferior)", value: "Turbo" }
+        ];
+        models.forEach(mod => {
+            const option = document.createElement('option');
+            option.value = mod.value;
+            option.textContent = mod.text;
+            modelSelect.appendChild(option);
+        });
+        
+        // Word count for prompt input
+        const promptInput = document.getElementById('promptInput');
+        const wordCountEl = document.getElementById('wordCountEl');
+        
+        promptInput.addEventListener('input', () => {
+            const text = promptInput.value.trim();
+            const wordCount = text === '' ? 0 : text.split(/\s+/).length;
+            wordCountEl.textContent = `Número de palavras: ${wordCount}`;
+        });
+        
+        // Listener para fechar o modal da imagem clicando no overlay
+        document.getElementById('overlay').addEventListener('click', closeImageModal);
+    });
+
+    // Função para exibir o popup
+    function exibirPopup() { document.getElementById('popup').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
+    // Função para fechar o popup
+    function fecharPopup() { document.getElementById('popup').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    // Exibe o popup assim que a página carrega
+    window.addEventListener('load', function() { exibirPopup(); });
+
+    // Tool toggle functions
+    function toggleTool(toolId) {
+        const content = document.getElementById(`${toolId}Content`);
+        const toggle = document.getElementById(`${toolId}Toggle`);
+        
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+            toggle.textContent = '▼';
+        } else {
+            content.style.display = 'block';
+            toggle.textContent = '▲';
+        }
+    }
+    
+    // Tab navigation
+    function showTab(tabId) {
+        // Hide all tab content
+        document.getElementById('historyCtn').style.display = 'none';
+        document.getElementById('seedPromptList').style.display = 'none';
+        document.getElementById('favoritesCtn').style.display = 'none';
+        
+        // Show selected tab
+        document.getElementById(tabId === 'history' ? 'historyCtn' : 
+                             tabId === 'prompts' ? 'seedPromptList' : 
+                             'favoritesCtn').style.display = 'block';
+        
+        // Update active tab button
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    // SCRIPT CORRIGIDO
+    const apiKey = "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"; // <-- CHAVE DA API CORRIGIDA
+    document.getElementById('generatePromptButton').addEventListener('click', async function() {
+        let userInput = document.getElementById("userInput").value.trim();
+        let responseContainer = document.getElementById("responseContainer");
+        let promptOutput = document.getElementById("promptOutput");
+        let copyButton = document.getElementById("copyButton");
+        if (userInput === "") {
+            responseContainer.style.display = "block";
+            promptOutput.innerHTML = "⚠️ Digite uma descrição primeiro!";
+            return;
+        }
+        responseContainer.style.display = "block";
+        promptOutput.innerHTML = "⏳ Gerando prompt...";
+        let requestBody = {
+            model: "mistral",
+            messages: [
+                { role: "system", content: "Generate an image creation prompt in English with highly detailed descriptions." },
+                { role: "user", content: `Describe a highly detailed image generation prompt based on: ${userInput}` }
+            ]
+        };
+        try {
+            let response = await fetch("https://text.pollinations.ai/openai", { // URL de fetch está correta
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+                body: JSON.stringify(requestBody)
+            });
+            let result = await response.json();
+            let generatedPrompt = result.choices[0].message.content;
+            promptOutput.innerHTML = `<strong>Prompt Gerado:</strong><br> ${generatedPrompt}`;
+            copyButton.style.display = "block";
+        } catch (error) {
+            promptOutput.innerHTML = "❌ Erro ao gerar prompt. Tente novamente.";
+            console.error("Erro:", error);
+        }
+    });
+    document.getElementById('copyButton').addEventListener('click', function() {
+        let responseText = document.getElementById("promptOutput").innerText;
+        if (responseText.trim() !== "") {
+            navigator.clipboard.writeText(responseText.replace("Prompt Gerado:", "").trim()).then(() => alert("✅ Prompt copiado!")).catch(err => console.error("Erro ao copiar texto", err));
+        }
+    });
+    document.getElementById('urImageUrlsendButtonEl').addEventListener('click', async function() {
+        const imagePreview = document.getElementById('imagePreviewEl');
+        const userContent = document.getElementById('userContentEl').value;
+        const apiResponse = document.getElementById('apiResponseEl');
+        const responseContainer = document.getElementById('apiResponseContainer');
+        const copyButton = document.getElementById('urImageUrlcopyButtonEl');
+        if (imagePreview.src) {
+            responseContainer.style.display = "none";
+            copyButton.style.display = "none";
+            try {
+                apiResponse.textContent = '⏳ Gerando descrição...';
+                responseContainer.style.display = "block";
+                const response = await getUrFiles(userContent, imagePreview.src);
+                apiResponse.textContent = response;
+                copyButton.style.display = "inline-block";
+            } catch (error) {
+                apiResponse.textContent = 'Erro: ' + error.message;
+                responseContainer.style.display = "block";
+            }
+        }
+    });
+    async function getUrFiles(userContent, image) {
+        const model = "openai";
+        const assistantMessage = "Generate a highly detailed description of the uploaded image in English, based on its contents.";
+        const messages = [
+            { role: "system", content: "Generate a highly detailed description of the uploaded image in English, based on its contents." },
+            { role: "assistant", content: assistantMessage },
+            { role: "user", content: [{ type: "text", text: userContent }, image ? { type: "image_url", image_url: { url: image } } : {}].filter(item => Object.keys(item).length) }
+        ];
+        const response = await fetch("https://text.pollinations.ai/openai", { // URL de fetch está correta
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+            body: JSON.stringify({ model: model, messages: messages.map(message => ({ role: message.role, content: message.content })), max_tokens: null, temperature: 0.7 }),
+        });
+        const data = await response.json();
+        if (data.choices && data.choices[0].message) {
+            return data.choices[0].message.content;
+        } else {
+            throw new Error("Resposta da API inválida.");
+        }
+    }
+    document.getElementById('imageUploadEl').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) { document.getElementById('imagePreviewEl').src = e.target.result; };
+            reader.readAsDataURL(file);
+        }
+    });
+    document.getElementById('urImageUrlcopyButtonEl').addEventListener('click', function() {
+        const responseText = document.getElementById("apiResponseEl").innerText;
+        if (responseText.trim() !== "") {
+            navigator.clipboard.writeText(responseText.trim()).then(() => alert("✅ Conteúdo copiado!")).catch(err => console.error("Erro ao copiar texto", err));
+        }
+    });
+
+  function openSettings() { settingsModalEl.style.display = "block"; showSettingsCategory("general"); loadSettings(); }
+  function closeSettings() { saveSettings(); settingsModalEl.style.display = "none"; }
+  function saveSettings() {
+    const maxStoredPrompts = maxStoredPromptsInput.value;
+    localStorage.maxStoredPrompts = maxStoredPrompts;
+    document.cookie = `maxStoredPrompts=${maxStoredPrompts}; path=/; samesite=lax; expires=${getOneYearFromNow().toUTCString()}`;
+  }
+  function loadSettings() {
+    const cookies = getCookies();
+    if (cookies.maxStoredPrompts) { maxStoredPromptsInput.value = cookies.maxStoredPrompts; }
+  }
+  function wipeAllData() {
+    if (confirm("Tem certeza de que deseja excluir todos os dados? Esta ação não pode ser desfeita.")) {
+      localStorage.clear();
+      document.cookie.split(";").forEach(function (c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      alert("Todos os dados foram apagados! Por favor, atualize a página.");
+      location.reload();
+    }
+  }
+  function showSettingsCategory(category) {
+    const contents = {
+        general: document.getElementById('generalSettingsContent'),
+        storage: document.getElementById('storageSettingsContent'),
+        patchNotes: document.getElementById('patchNotesSettingsContent')
+    };
+    for (const key in contents) {
+        if(contents[key]) contents[key].style.display = 'none';
+    }
+    if(contents[category]) contents[category].style.display = 'block';
+
+    const headerMap = {
+        general: "Configurações Gerais",
+        storage: "Configurações de Armazenamento",
+        patchNotes: "Notas de Patch",
+    };
+    document.getElementById('settingsHeaderEl').textContent = headerMap[category] || "Configurações";
+  }
+
+  let isGeneratingFlag = false;
+  let history = [];
+  let seedPromptHistory = JSON.parse(localStorage.seedPromptHistory || "[]");
+  let favorites = JSON.parse(localStorage.favorites || "[]");
+  let lockState = true;
+  
+  const { promptInput, seedInput, modelSelect, privateInput, nologoInput, enhanceInput, widthInput, heightInput, resolutionSelect, imageCountInput, newPromptBtn, outputImagesContainer, previewList, seedPromptList, favoritesCtn, favoritesList, favoritesDropdown, settingsModalEl, maxStoredPromptsInput, nightModeToggleInput } = (function() {
+    const ids = ["promptInput", "seedInput", "modelSelect", "privateInput", "nologoInput", "enhanceInput", "widthInput", "heightInput", "resolutionSelect", "imageCountInput", "newPromptBtn", "outputImagesContainer", "previewList", "seedPromptList", "favoritesCtn", "favoritesList", "favoritesDropdown", "settingsModalEl", "maxStoredPromptsInput", "nightModeToggleInput"];
+    const elements = {};
+    ids.forEach(id => elements[id] = document.getElementById(id));
+    return elements;
+  })();
+
+  showSeedPromptHistory();
+  showFavorites();
+
+  function updateResolutionInputs() {
+    if (resolutionSelect.value === "custom") {
+      customSizeInputs.style.display = "block";
+    } else {
+      customSizeInputs.style.display = "none";
+      let [width, height] = resolutionSelect.value.split("x");
+      widthInput.value = width;
+      heightInput.value = height;
+    }
+  }
+  async function sendNewPrompt() {
+    widthInput.value = Math.min(Math.max(widthInput.value, 128), 3840);
+    heightInput.value = Math.min(Math.max(heightInput.value, 128), 2160);
+    let imageCount = parseInt(imageCountInput.value);
+    if (!isGeneratingFlag) {
+      let initialSeed = parseInt(seedInput.value);
+      if (!lockState) initialSeed = Math.floor(Math.random() * 10000) + 1;
+      isGeneratingFlag = true;
+      newPromptBtn.textContent = "GERANDO IMAGENS...";
+      newPromptBtn.disabled = true;
+      outputImagesContainer.innerHTML = "";
+      for (let i = 0; i < imageCount; i++) {
+        await instanceImageFunction(i, initialSeed + i);
+      }
+      isGeneratingFlag = false;
+      newPromptBtn.textContent = "Gerar Imagens";
+      newPromptBtn.disabled = false;
+    }
+  }
+  function saveToHistory(prompt, seed, width, height, size, model, privated, nologo, enhance, imageCount) {
+    let entry = { prompt, seed, width, height, size, model, privated, nologo, enhance, imageCount };
+    history.unshift(entry);
+    history = history.slice(0, 3);
+    const maxStoredPrompts = parseInt(maxStoredPromptsInput.value) || 20;
+    if (seedPromptHistory.length < maxStoredPrompts) {
+       seedPromptHistory.unshift({ prompt: entry.prompt, seed: entry.seed, model: entry.model, width: entry.width, height: entry.height, privated: entry.privated, nologo: entry.nologo, enhance: entry.enhance });
+       localStorage.seedPromptHistory = JSON.stringify(seedPromptHistory);
+    }
+    showHistory();
+    showSeedPromptHistory();
+  }
+  function showHistory() {
+    previewList.innerHTML = "";
+    history.forEach((item, index) => {
+      let previewItem = document.createElement("div");
+      previewItem.className = "preview-item";
+      const imageUrl = getImageUrlFromParameters(item);
+      const filename = `history_${item.seed}.png`;
+      previewItem.innerHTML = `
+        <img src="${imageUrl}" alt="Pré-visualização do Histórico" onclick="openImageModal(this.src)">
+        <p><strong>Seed:</strong> ${item.seed}</p>
+        <div class="button-group">
+            <button onclick="downloadImageFunction('${imageUrl}', '${filename}')">Download</button>
+            <button class="secondary" onclick="toggleFavorite(${index})">${isFavorite(item) ? "★ Favorito" : "☆ Favoritar"}</button>
+        </div>
+      `;
+      previewList.appendChild(previewItem);
+    });
+  }
+  function showSeedPromptHistory() {
+    const container = seedPromptList.querySelector(".grid-container");
+    if(!container) return;
+    container.innerHTML = ''; 
+    seedPromptHistory.forEach((item, index) => {
+      let seedPromptItem = document.createElement("div");
+      seedPromptItem.className = "seed-prompt-item";
+      seedPromptItem.innerHTML = `
+        <p><strong>Prompt:</strong> ${item.prompt}</p>
+        <p><strong>Seed:</strong> ${item.seed}</p>
+        <div class="button-group">
+            <button onclick="regenerateImage(${index})">Re-gerar</button>
+            <button class="secondary" onclick="deleteSavedPrompt(${index})">Excluir</button>
+        </div>`;
+      container.appendChild(seedPromptItem);
+    });
+  }
+  function regenerateImage(index) {
+    let item = seedPromptHistory[index];
+    promptInput.value = item.prompt; seedInput.value = item.seed; modelSelect.value = item.model;
+    privateInput.checked = item.privated; nologoInput.checked = item.nologo; enhanceInput.checked = item.enhance;
+    widthInput.value = item.width; heightInput.value = item.height; resolutionSelect.value = `${item.width}x${item.height}`;
+    sendNewPrompt();
+  }
+  function deleteSavedPrompt(index) { seedPromptHistory.splice(index, 1); localStorage.seedPromptHistory = JSON.stringify(seedPromptHistory); showSeedPromptHistory(); }
+  function deleteAllSavedPrompts() { seedPromptHistory = []; localStorage.seedPromptHistory = JSON.stringify(seedPromptHistory); showSeedPromptHistory(); }
+  
+  async function downloadImageFunction(imageUrl, filename = "flux_lite_image.png") {
+    try {
+      let response = await fetch(imageUrl);
+      if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
+      let blob = await response.blob();
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Erro ao baixar a imagem:", error);
+      alert("Não foi possível baixar a imagem.");
+    }
+  }
+
+  function toggleFavorite(index, list = history) {
+    let item = { ...list[index] };
+    let favIndex = favorites.findIndex(fav => fav.prompt === item.prompt && fav.seed === item.seed && fav.model === item.model);
+    if (favIndex >= 0) { favorites.splice(favIndex, 1); } else { favorites.push(item); }
+    localStorage.favorites = JSON.stringify(favorites);
+    showHistory(); showFavorites();
+  }
+  function isFavorite(item) { return favorites.some(f => f.prompt === item.prompt && f.seed === item.seed && f.model === item.model); }
+  function showFavorites() {
+    favoritesList.innerHTML = "";
+    favorites.forEach((item, index) => {
+      let favoriteItem = document.createElement("div");
+      favoriteItem.className = "preview-item";
+      const imageUrl = getImageUrlFromParameters(item);
+      const filename = `favorite_${item.seed}.png`;
+      favoriteItem.innerHTML = `
+        <img src="${imageUrl}" alt="Imagem Favorita" onclick="openImageModal(this.src)">
+        <p><strong>Seed:</strong> ${item.seed}</p>
+        <div class="button-group">
+            <button onclick="downloadImageFunction('${imageUrl}', '${filename}')">Download</button>
+            <button class="secondary" onclick="toggleFavorite(${index}, favorites)">★ Remover</button>
+        </div>`;
+      favoritesList.appendChild(favoriteItem);
+    });
+  }
+  function toggleFavorites() { 
+    favoritesCtn.classList.toggle("collapsed");
+    const isCollapsed = favoritesCtn.classList.contains("collapsed");
+    favoritesList.style.display = isCollapsed ? 'none' : 'grid';
+    favoritesDropdown.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)';
+  }
+
+  async function fetcher(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      if (!response.ok) throw new Error(`Erro HTTP! status: ${response.status}`);
+      return response;
+    } catch(error) {
+        throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+  function toggleLock() { lockState = !lockState; document.getElementById('lockToggleBtn').textContent = lockState ? "🔐" : "🔓"; }
+  function toggleNightMode() {
+    document.body.classList.toggle("night-mode");
+    nightModeToggleInput.checked = document.body.classList.contains("night-mode");
+    document.cookie = `nightModeEnabled=${nightModeToggleInput.checked}; path=/; samesite=lax; expires=${getOneYearFromNow().toUTCString()}`;
+    updateParticlesForNightMode();
+  }
+  function initializeNightMode() {
+    const cookies = getCookies();
+    const nightModeEnabled = cookies.nightModeEnabled === "true";
+    if (nightModeEnabled) { document.body.classList.add("night-mode"); }
+    nightModeToggleInput.checked = nightModeEnabled;
+    updateParticlesForNightMode();
+  }
+  function getCookies() {
+    return document.cookie.split(";").reduce((acc, c) => {
+      const [key, value] = c.trim().split("=");
+      if(key) acc[key] = decodeURIComponent(value);
+      return acc;
+    }, {});
+  }
+  function getOneYearFromNow() { const date = new Date(); date.setFullYear(date.getFullYear() + 1); return date; }
+  
+  const instanceImageFunction = async (index, currentSeed) => {
+    try {
+      let baseUrl = "https://image.pollinations.ai/prompt/";
+      let promptValue = encodeURIComponent(promptInput.value);
+      let imageUrl = `${baseUrl}${promptValue}?width=${widthInput.value}&height=${heightInput.value}&nologo=${nologoInput.checked}&seed=${currentSeed}&model=${modelSelect.value}&private=${privateInput.checked}&enhance=${enhanceInput.checked}`;
+      
+      let response = await fetcher(imageUrl);
+      let blob = await response.blob();
+      let dataUrl = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+      
+      const card = document.createElement('div');
+      card.className = 'image-result-card';
+      
+      const imgElement = document.createElement("img");
+      imgElement.src = dataUrl;
+      imgElement.alt = `Imagem gerada com seed ${currentSeed}`;
+      imgElement.onclick = () => openImageModal(dataUrl);
+      
+      const downloadButton = document.createElement('button');
+      downloadButton.textContent = 'Download';
+      downloadButton.onclick = () => downloadImageFunction(imageUrl, `flux_${currentSeed}.png`);
+      
+      card.appendChild(imgElement);
+      card.appendChild(downloadButton);
+      
+      outputImagesContainer.appendChild(card);
+      saveToHistory(promptInput.value, currentSeed, widthInput.value, heightInput.value, blob.size, modelSelect.value, privateInput.checked, nologoInput.checked, enhanceInput.checked);
+    } catch (error) {
+      console.error("Erro ao gerar imagem:", error);
+      const errorCard = document.createElement('div');
+      errorCard.className = 'image-result-card';
+      errorCard.innerHTML = `<p>Falha ao gerar imagem com seed ${currentSeed}.</p><p><small>${error.message}</small></p>`;
+      outputImagesContainer.appendChild(errorCard);
+    }
+  };
+  function getImageUrlFromParameters(item) {
+    let baseUrl = "https://image.pollinations.ai/prompt/";
+    let prompt = encodeURIComponent(item.prompt);
+    return `${baseUrl}${prompt}?width=${item.width}&height=${item.height}&nologo=${item.nologo}&seed=${item.seed}&model=${item.model}&private=${item.privated}&enhance=${item.enhance}`;
+  }
+
+  initializeNightMode();
+  updateResolutionInputs();
+</script>
+</body>
+</html>
